@@ -1,46 +1,26 @@
 FROM ubuntu:latest
-MAINTAINER Ryan Kurte <ryankurte@gmail.com>
+MAINTAINER Veli-Matti Puurunen <veli-matti.puurunen@monidor.com>
 LABEL Description="Docker image for building arm-embedded projects"
+
+# To update image, in Docker Quickstart Terminal run:
+# docker build -t eaglesandotherbirds/gcc-arm-embedded .
+# docker push eaglesandotherbirds/gcc-arm-embedded
 
 # General dependencies
 RUN apt-get update && apt-get install -y \
   git \
-  subversion \
+  build-essential \
   cmake \
   make \
-  automake \
-  python-setuptools \
-  ninja-build \
-  python-dev \
-  libffi-dev \
-  libssl-dev \
-  libusb-1.0.0 \
-  libusb-1.0.0-dev \
   software-properties-common \
-  python-software-properties \
-  gawk \
-  genromfs \
-  ccache
+  cpputest \
+  curl
+
 
 # arm-none-eabi custom ppa
 RUN add-apt-repository ppa:team-gcc-arm-embedded/ppa && \
   apt-get update && \
   apt-get install -y gcc-arm-embedded
-
-# Yotta
-RUN easy_install pip && \
-  pip install yotta && \
-  mkdir -p /usr/local/lib/yotta_modules \
-  chown $USER /usr/local/lib/yotta_modules \
-  chmod 755 /usr/local/lib/yotta_modules
-
-# Pyserial for serial programming
-RUN pip install pyserial
-
-# STLink util
-RUN git clone https://github.com/texane/stlink.git && \
-  cd stlink && mkdir build && cd build && \
-  cmake .. && make && make install
 
 # Cleanup
 RUN apt-get clean && \
